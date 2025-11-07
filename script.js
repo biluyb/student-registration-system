@@ -1,23 +1,62 @@
-// Current step tracker
-let currentStep = 1;
-const totalSteps = 4;
+// Enhanced JavaScript with animations and interactions
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
-    updateProgressBar();
-    initializeTheme();
-    initializeRealTimeValidation();
+    initializeApp();
 });
+
+async function initializeApp() {
+    // Show loading animation
+    showLoading();
+    
+    // Initialize all components
+    await Promise.all([
+        initializeTheme(),
+        initializeAnimations(),
+        initializeFormValidation(),
+        initializeNavigation()
+    ]);
+    
+    // Hide loading animation
+    hideLoading();
+}
+
+// Loading states
+function showLoading() {
+    const loadingEl = document.createElement('div');
+    loadingEl.className = 'page-loading';
+    loadingEl.innerHTML = '<div class="loading-spinner"></div>';
+    document.body.appendChild(loadingEl);
+}
+
+function hideLoading() {
+    const loadingEl = document.querySelector('.page-loading');
+    if (loadingEl) {
+        loadingEl.style.opacity = '0';
+        setTimeout(() => loadingEl.remove(), 500);
+    }
+}
 
 // Theme functionality
 function initializeTheme() {
     const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = themeToggle.querySelector('i');
+    const themeIcon = themeToggle?.querySelector('i');
     
-    // Check for saved theme preference or default to light
-    const savedTheme = localStorage.getItem('theme') || 'light-mode';
-    document.body.className = savedTheme;
-    updateThemeIcon(themeIcon, savedTheme);
+    if (!themeToggle || !themeIcon) return;
+    
+    // Check for saved theme preference or use system preference
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme) {
+        document.body.className = savedTheme;
+    } else if (systemPrefersDark) {
+        document.body.className = 'dark-mode';
+    } else {
+        document.body.className = 'light-mode';
+    }
+    
+    updateThemeIcon(themeIcon, document.body.className);
     
     themeToggle.addEventListener('click', function() {
         const currentTheme = document.body.className;
@@ -26,432 +65,395 @@ function initializeTheme() {
         document.body.className = newTheme;
         localStorage.setItem('theme', newTheme);
         updateThemeIcon(themeIcon, newTheme);
+        
+        // Add theme change animation
+        document.documentElement.style.setProperty('--transition', 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)');
+        setTimeout(() => {
+            document.documentElement.style.setProperty('--transition', 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)');
+        }, 600);
     });
 }
 
 function updateThemeIcon(icon, theme) {
     if (theme === 'dark-mode') {
         icon.className = 'fas fa-sun';
+        icon.style.color = '#fbbf24';
     } else {
         icon.className = 'fas fa-moon';
+        icon.style.color = '#4b5563';
+    }
+}
+
+// Animation initialization
+function initializeAnimations() {
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe elements for animation
+    document.querySelectorAll('.student-card, .stat-card, .card').forEach(el => {
+        el.style.animation = 'fadeInUp 0.6s ease forwards paused';
+        observer.observe(el);
+    });
+}
+
+// Enhanced form validation
+function initializeFormValidation() {
+    const forms = document.querySelectorAll('form');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (!validateForm(this)) {
+                e.preventDefault();
+                animateFormError(this);
+            }
+        });
+        
+        // Real-time validation
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    clearFieldError(this);
+                }
+            });
+        });
+    });
+}
+
+function validateForm(form) {
+    let isValid = true;
+    const requiredFields = form.querySelectorAll('[required]');
+    
+    requiredFields.forEach(field => {
+        if (!validateField(field)) {
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+function validateField(field) {
+    const value = field.value.trim();
+    const fieldId = field.id;
+    let isValid = true;
+    
+    // Clear previous errors
+    clearFieldError(field);
+    
+    // Required field validation
+    if (field.hasAttribute('required') && !value) {
+        showFieldError(field, 'This field is required');
+        isValid = false;
+    }
+    
+    // Email validation
+    if (field.type === 'email' && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            showFieldError(field, 'Please enter a valid email address');
+            isValid = false;
+        }
+    }
+    
+    // Phone validation
+    if (field.id === 'phone' && value) {
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+        const cleanedPhone = value.replace(/[\s\-\(\)]/g, '');
+        if (!phoneRegex.test(cleanedPhone) || cleanedPhone.length < 10) {
+            showFieldError(field, 'Please enter a valid phone number');
+            isValid = false;
+        }
+    }
+    
+    // Name validation
+    if ((field.id === 'firstName' || field.id === 'lastName') && value) {
+        if (value.length < 2) {
+            showFieldError(field, 'Must be at least 2 characters long');
+            isValid = false;
+        }
+    }
+    
+    return isValid;
+}
+
+function showFieldError(field, message) {
+    field.style.borderColor = 'var(--danger)';
+    field.style.animation = 'shake 0.5s ease';
+    
+    const errorDiv = document.getElementById(field.id + 'Error');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+    
+    // Create floating error message
+    const floatingError = document.createElement('div');
+    floatingError.className = 'floating-error';
+    floatingError.textContent = message;
+    floatingError.style.cssText = `
+        position: absolute;
+        background: var(--danger);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        z-index: 1000;
+        animation: fadeInUp 0.3s ease;
+    `;
+    
+    const rect = field.getBoundingClientRect();
+    floatingError.style.top = (rect.top - 40) + 'px';
+    floatingError.style.left = rect.left + 'px';
+    
+    document.body.appendChild(floatingError);
+    
+    setTimeout(() => {
+        floatingError.remove();
+    }, 3000);
+}
+
+function clearFieldError(field) {
+    field.style.borderColor = '';
+    field.style.animation = '';
+    
+    const errorDiv = document.getElementById(field.id + 'Error');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+    }
+}
+
+function animateFormError(form) {
+    form.style.animation = 'shake 0.5s ease';
+    setTimeout(() => {
+        form.style.animation = '';
+    }, 500);
+}
+
+// Navigation initialization
+function initializeNavigation() {
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Mobile menu toggle
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function() {
+            document.body.classList.toggle('mobile-menu-open');
+        });
     }
 }
 
 // Progress bar functionality
 function updateProgressBar() {
     const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-    document.documentElement.style.setProperty('--progress', progress);
+    document.documentElement.style.setProperty('--progress', progress + '%');
 }
 
-// Step navigation
+// Step navigation with animations
+let currentStep = 1;
+const totalSteps = 4;
+
 function nextStep(step) {
     if (validateStep(step)) {
-        document.getElementById(`step${step}`).classList.remove('active');
-        document.querySelectorAll('.step')[step-1].classList.remove('active');
+        animateStepTransition(step, step + 1);
+    }
+}
+
+function prevStep(step) {
+    animateStepTransition(step, step - 1);
+}
+
+function animateStepTransition(fromStep, toStep) {
+    const currentStepEl = document.getElementById(`step${fromStep}`);
+    const nextStepEl = document.getElementById(`step${toStep}`);
+    
+    // Animate out current step
+    currentStepEl.style.animation = 'slideOutLeft 0.4s ease forwards';
+    
+    setTimeout(() => {
+        currentStepEl.classList.remove('active');
+        nextStepEl.classList.add('active');
+        nextStepEl.style.animation = 'slideInRight 0.4s ease forwards';
         
-        currentStep = step + 1;
-        document.getElementById(`step${currentStep}`).classList.add('active');
-        document.querySelectorAll('.step')[currentStep-1].classList.add('active');
-        
+        currentStep = toStep;
         updateProgressBar();
         
-        if (currentStep === 4) {
-            populateReview();
-        }
+        // Update step indicators
+        document.querySelectorAll('.step').forEach((step, index) => {
+            if (index < toStep) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
         
         // Scroll to top of form
         document.querySelector('.form-container').scrollIntoView({ 
             behavior: 'smooth', 
             block: 'start' 
         });
-    }
+    }, 400);
 }
 
-function prevStep(step) {
-    document.getElementById(`step${step}`).classList.remove('active');
-    document.querySelectorAll('.step')[step-1].classList.remove('active');
-    
-    currentStep = step - 1;
-    document.getElementById(`step${currentStep}`).classList.add('active');
-    document.querySelectorAll('.step')[currentStep-1].classList.add('active');
-    
-    updateProgressBar();
-    
-    // Scroll to top of form
-    document.querySelector('.form-container').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-    });
-}
-
-// Validation functions
-function validateStep(step) {
-    let isValid = true;
-    
-    switch(step) {
-        case 1:
-            isValid = validatePersonalInfo();
-            break;
-        case 2:
-            isValid = validateAcademicInfo();
-            break;
-        case 3:
-            isValid = validateDocuments();
-            break;
-    }
-    
-    return isValid;
-}
-
-function validatePersonalInfo() {
-    let isValid = true;
-    
-    const fields = [
-        { id: 'firstName', validator: validateName },
-        { id: 'lastName', validator: validateName },
-        { id: 'email', validator: validateEmail },
-        { id: 'phone', validator: validatePhone },
-        { id: 'dob', validator: validateDOB },
-        { id: 'gender', validator: validateRequired },
-        { id: 'address', validator: validateAddress }
-    ];
-    
-    fields.forEach(field => {
-        if (!field.validator(field.id)) {
-            isValid = false;
+// Additional animation keyframes
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideOutLeft {
+        from {
+            opacity: 1;
+            transform: translateX(0);
         }
-    });
-    
-    return isValid;
-}
-
-function validateAcademicInfo() {
-    let isValid = true;
-    
-    const fields = [
-        { id: 'department', validator: validateRequired },
-        { id: 'program', validator: validateRequired },
-        { id: 'semester', validator: validateRequired },
-        { id: 'academicYear', validator: validateRequired },
-        { id: 'previousSchool', validator: validateRequired },
-        { id: 'qualification', validator: validateRequired },
-        { id: 'percentage', validator: validatePercentage }
-    ];
-    
-    fields.forEach(field => {
-        if (!field.validator(field.id)) {
-            isValid = false;
+        to {
+            opacity: 0;
+            transform: translateX(-30px);
         }
-    });
+    }
     
-    return isValid;
-}
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .floating-error {
+        position: absolute;
+        background: var(--danger);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        z-index: 1000;
+        animation: fadeInUp 0.3s ease;
+    }
+`;
+document.head.appendChild(style);
 
-function validateDocuments() {
-    let isValid = true;
-    
-    // Only validate required documents
-    if (!validateFile('photo', ['image/jpeg', 'image/png', 'image/jpg'])) {
-        isValid = false;
-    }
-    
-    if (!validateFile('idProof', ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'])) {
-        isValid = false;
-    }
-    
-    return isValid;
-}
+// Export functions for global use
+window.nextStep = nextStep;
+window.prevStep = prevStep;
+window.validateStep = validateStep;
 
-// Individual validation functions
-function validateName(fieldId) {
-    const value = document.getElementById(fieldId).value.trim();
-    if (value.length < 2) {
-        showError(`${fieldId}Error`, 'Must be at least 2 characters long');
-        return false;
-    }
-    hideError(`${fieldId}Error`);
-    return true;
-}
-
-function validateEmail(fieldId) {
-    const value = document.getElementById(fieldId).value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Enhanced table responsiveness
+function initializeTableResponsive() {
+    const tableContainer = document.querySelector('.table-container');
+    const table = document.querySelector('.students-table');
     
-    if (!emailRegex.test(value)) {
-        showError(`${fieldId}Error`, 'Please enter a valid email address');
-        return false;
-    }
-    hideError(`${fieldId}Error`);
-    return true;
-}
-
-function validatePhone(fieldId) {
-    const value = document.getElementById(fieldId).value.trim();
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    const cleanedPhone = value.replace(/[\s\-\(\)]/g, '');
+    if (!tableContainer || !table) return;
     
-    if (!phoneRegex.test(cleanedPhone) || cleanedPhone.length < 10) {
-        showError(`${fieldId}Error`, 'Please enter a valid phone number');
-        return false;
-    }
-    hideError(`${fieldId}Error`);
-    return true;
-}
-
-function validateDOB(fieldId) {
-    const value = document.getElementById(fieldId).value;
-    if (!value) {
-        showError(`${fieldId}Error`, 'Date of birth is required');
-        return false;
-    }
-    
-    const birthDate = new Date(value);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    
-    if (age < 16) {
-        showError(`${fieldId}Error`, 'You must be at least 16 years old');
-        return false;
-    }
-    
-    hideError(`${fieldId}Error`);
-    return true;
-}
-
-function validateRequired(fieldId) {
-    const value = document.getElementById(fieldId).value;
-    if (!value) {
-        showError(`${fieldId}Error`, 'This field is required');
-        return false;
-    }
-    hideError(`${fieldId}Error`);
-    return true;
-}
-
-function validateAddress(fieldId) {
-    const value = document.getElementById(fieldId).value.trim();
-    if (value.length < 10) {
-        showError(`${fieldId}Error`, 'Address must be at least 10 characters long');
-        return false;
-    }
-    hideError(`${fieldId}Error`);
-    return true;
-}
-
-function validatePercentage(fieldId) {
-    const value = parseFloat(document.getElementById(fieldId).value);
-    if (isNaN(value) || value < 0 || value > 100) {
-        showError(`${fieldId}Error`, 'Please enter a valid percentage between 0 and 100');
-        return false;
-    }
-    hideError(`${fieldId}Error`);
-    return true;
-}
-
-function validateFile(fieldId, allowedTypes) {
-    const fileInput = document.getElementById(fieldId);
-    if (!fileInput.files || fileInput.files.length === 0) {
-        showError(`${fieldId}Error`, 'This file is required');
-        return false;
-    }
-    
-    const file = fileInput.files[0];
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit
-        showError(`${fieldId}Error`, 'File size must be less than 2MB');
-        return false;
-    }
-    
-    if (!allowedTypes.includes(file.type)) {
-        showError(`${fieldId}Error`, `File type not allowed. Allowed: ${allowedTypes.join(', ')}`);
-        return false;
-    }
-    
-    hideError(`${fieldId}Error`);
-    return true;
-}
-
-// Error handling
-function showError(elementId, message) {
-    const errorElement = document.getElementById(elementId);
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
-    
-    const inputId = elementId.replace('Error', '');
-    const inputElement = document.getElementById(inputId);
-    if (inputElement) {
-        inputElement.style.borderColor = 'var(--danger)';
-    }
-}
-
-function hideError(elementId) {
-    const errorElement = document.getElementById(elementId);
-    errorElement.style.display = 'none';
-    
-    const inputId = elementId.replace('Error', '');
-    const inputElement = document.getElementById(inputId);
-    if (inputElement) {
-        inputElement.style.borderColor = '';
-    }
-}
-
-// Real-time validation
-function initializeRealTimeValidation() {
-    document.querySelectorAll('input, select, textarea').forEach(element => {
-        element.addEventListener('blur', function() {
-            const fieldId = this.id;
-            if (this.hasAttribute('required') || this.value.trim() !== '') {
-                validateField(fieldId);
-            }
-        });
+    // Add horizontal scroll indicators
+    const addScrollIndicators = () => {
+        if (tableContainer.querySelector('.scroll-indicator')) {
+            tableContainer.querySelector('.scroll-indicator').remove();
+        }
         
-        // Real-time validation for typing in required fields
-        if (element.hasAttribute('required')) {
-            element.addEventListener('input', function() {
-                if (this.value.trim() !== '') {
-                    validateField(this.id);
-                }
-            });
-        }
-    });
-}
-
-function validateField(fieldId) {
-    switch(fieldId) {
-        case 'firstName':
-        case 'lastName':
-            validateName(fieldId);
-            break;
-        case 'email':
-            validateEmail(fieldId);
-            break;
-        case 'phone':
-            validatePhone(fieldId);
-            break;
-        case 'dob':
-            validateDOB(fieldId);
-            break;
-        case 'address':
-            validateAddress(fieldId);
-            break;
-        case 'percentage':
-            validatePercentage(fieldId);
-            break;
-        default:
-            if (document.getElementById(fieldId).hasAttribute('required')) {
-                validateRequired(fieldId);
-            }
-            break;
-    }
-}
-
-// Review section population
-function populateReview() {
-    const reviewContent = document.getElementById('reviewContent');
+        const indicator = document.createElement('div');
+        indicator.className = 'scroll-indicator';
+        indicator.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        indicator.style.cssText = `
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            animation: bounceRight 2s infinite;
+            z-index: 5;
+            pointer-events: none;
+        `;
+        
+        tableContainer.style.position = 'relative';
+        tableContainer.appendChild(indicator);
+        
+        // Remove indicator after first scroll
+        const removeIndicator = () => {
+            indicator.style.opacity = '0';
+            setTimeout(() => indicator.remove(), 300);
+            tableContainer.removeEventListener('scroll', removeIndicator);
+        };
+        
+        tableContainer.addEventListener('scroll', removeIndicator);
+    };
     
-    const formData = {
-        'Personal Information': {
-            'First Name': document.getElementById('firstName').value,
-            'Last Name': document.getElementById('lastName').value,
-            'Email': document.getElementById('email').value,
-            'Phone': document.getElementById('phone').value,
-            'Date of Birth': document.getElementById('dob').value,
-            'Gender': document.getElementById('gender').options[document.getElementById('gender').selectedIndex].text,
-            'Address': document.getElementById('address').value,
-            'Nationality': document.getElementById('nationality').value || 'Not provided',
-            'ID Number': document.getElementById('idNumber').value || 'Not provided'
-        },
-        'Academic Details': {
-            'Department': document.getElementById('department').options[document.getElementById('department').selectedIndex].text,
-            'Program': document.getElementById('program').options[document.getElementById('program').selectedIndex].text,
-            'Semester': document.getElementById('semester').options[document.getElementById('semester').selectedIndex].text,
-            'Academic Year': document.getElementById('academicYear').options[document.getElementById('academicYear').selectedIndex].text,
-            'Previous School': document.getElementById('previousSchool').value,
-            'Qualification': document.getElementById('qualification').options[document.getElementById('qualification').selectedIndex].text,
-            'Percentage/GPA': document.getElementById('percentage').value + '%',
-            'Board/University': document.getElementById('board').value || 'Not provided',
-            'Achievements': document.getElementById('achievements').value || 'Not provided'
-        },
-        'Documents': {
-            'Passport Photo': document.getElementById('photo').files[0]?.name || 'Not uploaded',
-            'ID Proof': document.getElementById('idProof').files[0]?.name || 'Not uploaded',
-            'Marksheet': document.getElementById('marksheet').files[0]?.name || 'Not uploaded',
-            'Transfer Certificate': document.getElementById('transferCertificate').files[0]?.name || 'Not uploaded',
-            'Additional Documents': document.getElementById('additionalDocs').files.length > 0 ? 
-                `${document.getElementById('additionalDocs').files.length} file(s) uploaded` : 'No additional files'
+    // Check if table needs horizontal scrolling
+    const checkTableOverflow = () => {
+        if (table.scrollWidth > tableContainer.clientWidth) {
+            addScrollIndicators();
         }
     };
     
-    let reviewHTML = '';
+    // Initial check
+    checkTableOverflow();
     
-    for (const [section, fields] of Object.entries(formData)) {
-        reviewHTML += `
-            <div class="review-section">
-                <h3>${section}</h3>
-        `;
-        
-        for (const [label, value] of Object.entries(fields)) {
-            reviewHTML += `
-                <div class="review-item">
-                    <span class="review-label">${label}:</span>
-                    <span class="review-value">${value}</span>
-                </div>
-            `;
-        }
-        
-        reviewHTML += `</div>`;
-    }
-    
-    reviewContent.innerHTML = reviewHTML;
+    // Check on resize
+    window.addEventListener('resize', checkTableOverflow);
 }
 
-// Form submission
-document.getElementById('registrationForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Validate final step
-    const agreeTerms = document.getElementById('agreeTerms').checked;
-    const declareInfo = document.getElementById('declareInfo').checked;
-    
-    if (!agreeTerms) {
-        showError('agreeTermsError', 'You must agree to the terms and conditions');
-        return;
-    } else {
-        hideError('agreeTermsError');
+// Add this animation to your CSS
+const responsiveStyles = `
+    @keyframes bounceRight {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(-50%) translateX(0);
+        }
+        40% {
+            transform: translateY(-50%) translateX(-5px);
+        }
+        60% {
+            transform: translateY(-50%) translateX(-3px);
+        }
     }
     
-    if (!declareInfo) {
-        showError('declareInfoError', 'You must declare the information is correct');
-        return;
-    } else {
-        hideError('declareInfoError');
+    .scroll-indicator {
+        animation: bounceRight 2s infinite;
     }
-    
-    // Validate all steps
-    if (validateStep(1) && validateStep(2) && validateStep(3) && agreeTerms && declareInfo) {
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        submitBtn.disabled = true;
-        
-        // Submit the form
-        this.submit();
-    } else {
-        // If validation fails, go back to first invalid step
-        if (!validateStep(1)) currentStep = 1;
-        else if (!validateStep(2)) currentStep = 2;
-        else if (!validateStep(3)) currentStep = 3;
-        
-        // Show the first invalid step
-        document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
-        document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
-        
-        document.getElementById(`step${currentStep}`).classList.add('active');
-        document.querySelectorAll('.step')[currentStep-1].classList.add('active');
-        updateProgressBar();
-        
-        // Scroll to top
-        document.querySelector('.form-container').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
-        });
-    }
+`;
+
+// Inject the styles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = responsiveStyles;
+document.head.appendChild(styleSheet);
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTableResponsive();
 });

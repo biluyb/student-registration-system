@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-footer">
                 <p><a href="../index.php" class="link"><i class="fas fa-arrow-left"></i> Back to Registration</a></p>
                 <p class="contact-info">
-                    Default credentials: admin / admin123
+                    <!-- Default credentials: admin / admin123 -->
                 </p>
             </div>
         </div>

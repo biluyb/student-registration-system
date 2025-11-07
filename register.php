@@ -126,9 +126,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'department' => $department,
                     'program' => $program
                 ];
-                
-                // Send confirmation email (you can implement this)
-                // sendConfirmationEmail($email, $studentId, $firstName . ' ' . $lastName);
             } else {
                 $errors[] = "Registration failed. Please try again. Error: " . $conn->error;
             }

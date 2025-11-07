@@ -21,13 +21,14 @@ $recentStudents = $conn->query("SELECT * FROM students ORDER BY registration_dat
 
 // Get department-wise distribution
 $deptStats = $conn->query("SELECT department, COUNT(*) as count FROM students GROUP BY department");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Woolkite Polytechnic College</title>
+    <title>Admin Dashboard - Wolkite Polytechnic College</title>
     <link rel="stylesheet" href="../style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -171,11 +172,14 @@ $deptStats = $conn->query("SELECT department, COUNT(*) as count FROM students GR
     </style>
 </head>
 <body class="light-mode">
+    <?php include 'navigation.php'; ?>
     <div class="theme-toggle">
         <button id="themeToggle" class="theme-btn">
             <i class="fas fa-moon"></i>
         </button>
     </div>
+    
+
     
     <div class="logout-btn">
         <a href="logout.php" class="btn btn-danger btn-small" style="width: auto; padding: 10px 20px;">
@@ -191,7 +195,7 @@ $deptStats = $conn->query("SELECT department, COUNT(*) as count FROM students GR
                 </div>
                 <div class="college-info">
                     <h1>Admin Dashboard</h1>
-                    <p>Woolkite Polytechnic College - Student Management</p>
+                    <p>Wolkite Polytechnic College - Student Management</p>
                 </div>
             </div>
         </div>
@@ -271,20 +275,26 @@ $deptStats = $conn->query("SELECT department, COUNT(*) as count FROM students GR
                         </div>
                         
                         <!-- Quick Actions -->
-                        <div class="card">
-                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                            <div class="action-buttons">
-                                <a href="students.php" class="btn btn-small">
-                                    <i class="fas fa-list"></i> View All Students
-                                </a>
-                                <a href="../index.php" class="btn btn-secondary btn-small">
-                                    <i class="fas fa-user-plus"></i> New Registration
-                                </a>
-                                <a href="logout.php" class="btn btn-danger btn-small">
-                                    <i class="fas fa-sign-out-alt"></i> Logout
-                                </a>
-                            </div>
-                        </div>
+                        <!-- Quick Actions -->
+<div class="card">
+    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+    <div class="action-buttons">
+        <a href="students.php" class="btn btn-small">
+            <i class="fas fa-list"></i> Manage Students
+        </a>
+        <a href="../students.php" class="btn btn-secondary btn-small" target="_blank">
+            <i class="fas fa-eye"></i> View Public Site
+        </a>
+        <a href="../index.php" class="btn btn-small" style="background: var(--info);">
+            <i class="fas fa-user-plus"></i> New Registration
+        </a>
+        <a href="logout.php" class="btn btn-danger btn-small">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</div>
+
+                        
                     </div>
                     
                     <!-- Right Column -->
@@ -312,7 +322,7 @@ $deptStats = $conn->query("SELECT department, COUNT(*) as count FROM students GR
                             <div style="display: grid; gap: 10px;">
                                 <div style="display: flex; justify-content: space-between;">
                                     <span>College:</span>
-                                    <strong>Woolkite Polytechnic</strong>
+                                    <strong>Wolkite Polytechnic</strong>
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
                                     <span>Admin Role:</span>

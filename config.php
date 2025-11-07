@@ -11,13 +11,18 @@ define('MAX_FILE_SIZE', 2 * 1024 * 1024); // 2MB
 define('UPLOAD_PATH', 'uploads/');
 define('ALLOWED_FILE_TYPES', ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf']);
 
-// Create connection
+// Create connection and handle database creation
 function getDBConnection() {
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // First, connect without selecting database
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS);
     
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+    
+    // Create database if it doesn't exist
+    $conn->query("CREATE DATABASE IF NOT EXISTS " . DB_NAME);
+    $conn->select_db(DB_NAME);
     
     return $conn;
 }
@@ -134,4 +139,14 @@ function sanitizeInput($data) {
     $data = htmlspecialchars($data);
     return $data;
 }
+
+// Initialize database on first run
+function initializeDatabase() {
+    $conn = getDBConnection();
+    createTablesIfNotExists($conn);
+    $conn->close();
+}
+
+// Auto-initialize database when config is loaded
+initializeDatabase();
 ?>

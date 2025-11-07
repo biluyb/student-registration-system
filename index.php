@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Registration - Woolkite Polytechnic College</title>
+    <title>Student Registration - WOLKITE POLYTECHNIC COLLEGE </title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="light-mode">
+    <?php include 'navigation.php'; ?>
+   
+
     <div class="theme-toggle">
         <button id="themeToggle" class="theme-btn">
             <i class="fas fa-moon"></i>
@@ -21,7 +24,7 @@
                     <i class="fas fa-graduation-cap"></i>
                 </div>
                 <div class="college-info">
-                    <h1>Woolkite Polytechnic College</h1>
+                    <h1>WOLKITE POLYTECHNIC COLLEGE </h1>
                     <p>Excellence in Technical Education Since 1995</p>
                 </div>
             </div>
@@ -309,7 +312,7 @@
                     <div class="form-group" style="margin-top: 20px;">
                         <label>
                             <input type="checkbox" id="agreeTerms" name="agreeTerms">
-                            I agree to the <a href="#" class="link">Terms and Conditions</a> and <a href="#" class="link">Privacy Policy</a> of Woolkite Polytechnic College
+                            I agree to the <a href="#" class="link">Terms and Conditions</a> and <a href="#" class="link">Privacy Policy</a> of Wolkite Polytechnic College
                         </label>
                         <div class="error" id="agreeTermsError">You must agree to the terms and conditions</div>
                     </div>
@@ -332,8 +335,8 @@
             <div class="form-footer">
                 <p>Already have an account? <a href="admin/login.php" class="link">Admin Login</a> | <a href="#" class="link">Check Application Status</a></p>
                 <p class="contact-info">
-                    <i class="fas fa-phone"></i> +1 (555) 123-4567 | 
-                    <i class="fas fa-envelope"></i> admissions@woolkitepoly.edu
+                    <i class="fas fa-phone"></i> +251 947125689 | 
+                    <i class="fas fa-envelope"></i> admissions@wolkitepoly.edu
                 </p>
             </div>
         </div>
