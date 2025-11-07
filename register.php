@@ -138,6 +138,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Exception $e) {
         $errors[] = "System error: " . $e->getMessage();
     }
+
+    // country validation
+$nationality = sanitizeInput($_POST['nationality'] ?? '');
+
+// Validate country code (basic validation)
+if (!empty($nationality) && !preg_match('/^[a-z]{2}$/', $nationality)) {
+    $errors[] = "Please select a valid nationality.";
+}
+
+// You can also validate against a list of allowed countries
+$allowedCountries = ['us', 'gb', 'ca', 'au', 'in', 'cn', 'jp', 'de', 'fr', 'it', 'br', 'mx', 'es', 'kr', 'ng', 'za', 'eg', 'sa', 'ae', 'ru'];
+if (!empty($nationality) && !in_array($nationality, $allowedCountries)) {
+    $errors[] = "Selected nationality is not supported.";
+}
 }
 ?>
 <!DOCTYPE html>

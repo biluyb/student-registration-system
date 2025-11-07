@@ -20,9 +20,9 @@
             <a href="students.php" class="nav-link">
                 <i class="fas fa-users"></i> Our Students
             </a>
-            <a href="index.php" class="nav-link">
+            <!-- <a href="index.php" class="nav-link">
                 <i class="fas fa-user-plus"></i> Apply Now
-            </a>
+            </a> -->
             <a href="admin/login.php" class="nav-link">
                 <i class="fas fa-lock"></i> Admin
             </a>

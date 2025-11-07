@@ -161,6 +161,8 @@ $programs = $conn->query("SELECT DISTINCT program FROM students WHERE status = '
     </style>
 </head>
 <body class="light-mode">
+        <?php include 'navigation.php'; ?>
+
     <div class="theme-toggle">
         <button id="themeToggle" class="theme-btn">
             <i class="fas fa-moon"></i>
