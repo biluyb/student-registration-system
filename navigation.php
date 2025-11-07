@@ -14,7 +14,7 @@
         </button>
         
         <div class="nav-links" id="navLinks">
-            <a href="dashboard.php" class="nav-link">
+            <a href="index.php" class="nav-link">
                 <i class="fas fa-home"></i> Home
             </a>
             <a href="students.php" class="nav-link">

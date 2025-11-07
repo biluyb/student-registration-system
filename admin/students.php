@@ -311,29 +311,17 @@ $departments = $conn->query("SELECT DISTINCT department FROM students ORDER BY d
     </style>
 </head>
 <body class="light-mode">
+
+
     <div class="theme-toggle">
         <button id="themeToggle" class="theme-btn">
             <i class="fas fa-moon"></i>
         </button>
     </div>
     <!-- Navigation -->
-<div class="navigation">
-    <a href="dashboard.php" class="btn btn-small">
-        <i class="fas fa-arrow-left"></i> Dashboard
-    </a>
-    <a href="../students.php" class="btn btn-secondary btn-small" target="_blank">
-        <i class="fas fa-external-link-alt"></i> Public View
-    </a>
 </div>
-    <div class="logout-btn">
-        <a href="dashboard.php" class="btn btn-small" style="background: var(--secondary);">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-        </a>
-        <a href="logout.php" class="btn btn-danger btn-small">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-    </div>
-
+  
+ 
     <div class="container">
         <div class="header">
             <div class="college-brand">

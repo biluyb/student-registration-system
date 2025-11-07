@@ -180,13 +180,6 @@ $deptStats = $conn->query("SELECT department, COUNT(*) as count FROM students GR
     </div>
     
 
-    
-    <div class="logout-btn">
-        <a href="logout.php" class="btn btn-danger btn-small" style="width: auto; padding: 10px 20px;">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-    </div>
-
     <div class="container">
         <div class="header">
             <div class="college-brand">
