@@ -259,14 +259,14 @@
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
-                                <label for="photo" class="required">Passport Size Photo</label>
+                                <label for="photo" >Passport Size Photo</label>
                                 <input type="file" id="photo" name="photo" accept="image/*">
                                 <div class="error" id="photoError">Passport photo is required</div>
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
-                                <label for="idProof" class="required">ID Proof</label>
+                                <label for="idProof" >ID Proof</label>
                                 <input type="file" id="idProof" name="idProof" accept=".pdf,image/*">
                                 <div class="error" id="idProofError">ID proof is required</div>
                             </div>

@@ -1,5 +1,5 @@
 // Student Registration System - Main JavaScript File
-// Wolkite Polytechnic College
+// Woolkite Polytechnic College
 
 // Global variables
 let currentStep = 1;
@@ -47,7 +47,7 @@ function showLoading() {
     loadingEl.innerHTML = `
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <p>Loading Wolkite Polytechnic College Portal...</p>
+            <p>Loading Woolkite Polytechnic College Portal...</p>
         </div>
     `;
     document.body.appendChild(loadingEl);
@@ -309,61 +309,61 @@ function validateStep2() {
     return isValid;
 }
 
-function validateStep3() {
-    let isValid = true;
+// function validateStep3() {
+//     let isValid = true;
     
-    // Validate required files
-    const photo = document.getElementById('photo');
-    const idProof = document.getElementById('idProof');
+//     // Validate required files
+//     const photo = document.getElementById('photo');
+//     const idProof = document.getElementById('idProof');
     
-    if (photo && (!photo.files || photo.files.length === 0)) {
-        showFieldError(photo, 'Passport photo is required');
-        isValid = false;
-    } else {
-        clearFieldError(photo);
-    }
+//     if (photo && (!photo.files || photo.files.length === 0)) {
+//         showFieldError(photo, 'Passport photo is required');
+//         isValid = false;
+//     } else {
+//         clearFieldError(photo);
+//     }
     
-    if (idProof && (!idProof.files || idProof.files.length === 0)) {
-        showFieldError(idProof, 'ID proof is required');
-        isValid = false;
-    } else {
-        clearFieldError(idProof);
-    }
+//     if (idProof && (!idProof.files || idProof.files.length === 0)) {
+//         showFieldError(idProof, 'ID proof is required');
+//         isValid = false;
+//     } else {
+//         clearFieldError(idProof);
+//     }
     
-    return isValid;
-}
+//     return isValid;
+// }
 
 // Field Validation System
-function initializeFormValidation() {
-    const forms = document.querySelectorAll('form');
+// function initializeFormValidation() {
+//     const forms = document.querySelectorAll('form');
     
-    forms.forEach(form => {
-        // Form submission validation
-        form.addEventListener('submit', function(e) {
-            if (!validateForm(this)) {
-                e.preventDefault();
-                animateFormError(this);
-            }
-        });
+//     forms.forEach(form => {
+//         // Form submission validation
+//         form.addEventListener('submit', function(e) {
+//             if (!validateForm(this)) {
+//                 e.preventDefault();
+//                 animateFormError(this);
+//             }
+//         });
         
-        // Real-time validation
-        const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                validateField(this);
-            });
+//         // Real-time validation
+//         const inputs = form.querySelectorAll('input, select, textarea');
+//         inputs.forEach(input => {
+//             input.addEventListener('blur', function() {
+//                 validateField(this);
+//             });
             
-            // Clear errors on input
-            input.addEventListener('input', function() {
-                if (this.value.trim() !== '') {
-                    clearFieldError(this);
-                }
-            });
-        });
-    });
+//             // Clear errors on input
+//             input.addEventListener('input', function() {
+//                 if (this.value.trim() !== '') {
+//                     clearFieldError(this);
+//                 }
+//             });
+//         });
+//     });
     
-    console.log('Form validation initialized');
-}
+//     console.log('Form validation initialized');
+// }
 
 function validateForm(form) {
     let isValid = true;
@@ -458,8 +458,8 @@ function validateField(field) {
     
     // Address validation
     if (field.id === 'address' && value) {
-        if (value.length < 10) {
-            showFieldError(field, 'Address must be at least 10 characters long');
+        if (value.length < 2) {
+            showFieldError(field, 'Address must be at least 2 characters long');
             isValid = false;
         }
     }

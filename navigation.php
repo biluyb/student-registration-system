@@ -6,7 +6,7 @@
     <div class="nav-container">
         <a href="dashboard.php" class="nav-logo">
             <i class="fas fa-graduation-cap"></i>
-            <span>Woolkite Polytechnic</span>
+            <span>Wolkite Polytechnic</span>
         </a>
         
         <button class="nav-toggle" id="navToggle">

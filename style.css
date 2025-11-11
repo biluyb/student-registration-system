@@ -1639,3 +1639,267 @@ input::placeholder, textarea::placeholder {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+/* Enhanced File Upload Styles */
+.file-upload-wrapper {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.file-upload-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.file-upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 30px 20px;
+    text-align: center;
+    transition: var(--transition);
+    background: var(--bg-secondary);
+    position: relative;
+    z-index: 1;
+}
+
+.file-upload-area:hover {
+    border-color: var(--primary);
+    background: var(--bg-tertiary);
+}
+
+.file-upload-area.dragover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: scale(1.02);
+}
+
+.file-upload-area.has-file {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.file-upload-icon {
+    font-size: 3rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+.file-upload-area:hover .file-upload-icon {
+    color: var(--primary);
+    transform: translateY(-5px);
+}
+
+.file-upload-text {
+    margin-bottom: 20px;
+}
+
+.file-main-text {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+.file-sub-text {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.file-browse-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.file-browse-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+/* File Preview */
+.file-preview {
+    margin-top: 15px;
+    display: none;
+}
+
+.file-preview.has-files {
+    display: block;
+}
+
+.file-preview-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    transition: var(--transition);
+}
+
+.file-preview-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-sm);
+}
+
+.file-preview-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.file-preview-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 8px;
+    font-size: 1.2rem;
+}
+
+.file-preview-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-preview-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-preview-size {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.file-preview-remove {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: var(--transition);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.file-preview-remove:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* Image Preview */
+.image-preview {
+    max-width: 100px;
+    max-height: 80px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+}
+
+/* Multiple files preview */
+.multiple-files-preview {
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+    padding: 15px;
+}
+
+.multiple-files-count {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* File type colors */
+.file-type-pdf .file-preview-icon {
+    background: #f56565;
+    color: white;
+}
+
+.file-type-image .file-preview-icon {
+    background: #48bb78;
+    color: white;
+}
+
+.file-type-document .file-preview-icon {
+    background: #4299e1;
+    color: white;
+}
+
+/* Responsive File Upload */
+@media (max-width: 768px) {
+    .file-upload-area {
+        padding: 20px 15px;
+    }
+    
+    .file-upload-icon {
+        font-size: 2.5rem;
+    }
+    
+    .file-main-text {
+        font-size: 1rem;
+    }
+    
+    .file-preview-item {
+        padding: 10px 12px;
+    }
+    
+    .file-preview-info {
+        gap: 8px;
+    }
+    
+    .file-preview-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+}
+
+/* Drag and drop animations */
+@keyframes pulseUpload {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.file-upload-area.dragover {
+    animation: pulseUpload 1s ease-in-out infinite;
+}
+
+/* File validation states */
+.file-upload-area.invalid {
+    border-color: var(--danger);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.file-upload-area.valid {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.05);
+}
